@@ -50,7 +50,7 @@ for f in dataPath.glob('*.xdf'):
 
         columns = [x.upper() for x in columns]
         eegChannels = copy.deepcopy(columns)
-        eegChannels.remove("COUNTER")
+        #eegChannels.remove("COUNTER")
 
         #Create data frame
         df =  pd.DataFrame(data=eegData, index=None, columns=columns)

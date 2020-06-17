@@ -1,3 +1,6 @@
 *data/
 *data-processed/
 *.idea/
+*pyprep_source
+data-filtered
+*.txt

@@ -23,7 +23,7 @@ outlet = StreamOutlet(info)
 #Load sound files
 startSound = sa.WaveObject.from_wave_file('./sounds/beep-07.wav')
 endSound = sa.WaveObject.from_wave_file('./sounds/beep-10.wav')
-totalDuration = 60*1
+totalDuration = 60*5
 state = "Stop"
 red   = (0,0,255)
 green = (0,255,0)
@@ -53,7 +53,7 @@ while True:
         cv2.destroyAllWindows()
     elif k == ord('s'): # wait for 's' key to save and exit
         #Count time
-        for _ in range(2):
+        for _ in range(3):
             play_obj = startSound.play()
             play_obj.wait_done()
             time.sleep(1)

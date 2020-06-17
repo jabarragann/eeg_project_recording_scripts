@@ -4,7 +4,7 @@ import numpy as np
 
 #dict(data[1]['info']['desc'][0]['channels'][0])
 
-data, header = pyxdf.load_xdf('data/testData/Juan_S001_T001_Normal.xdf')
+data, header = pyxdf.load_xdf('data/karunaSantyS3/Santy_S003_T001_Normal.xdf')
 
 for stream in data:
     y = stream['time_series']
