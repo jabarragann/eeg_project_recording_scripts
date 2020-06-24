@@ -57,7 +57,14 @@ for f in dataPath.glob('*.xdf'):
 
         #Add label and time stamps
         df['COMPUTER_TIME'] = eegTime
-        df['label'] = 5 if task == 'Normal' else  10
+
+        #Label
+        if task == "Baseline": #Baseline
+            df['label'] = 0
+        elif task == "Normal" or task == "Easy": #Low Workload
+            df['label'] = 5
+        elif task == "Inv" or task == "High": # high Workload
+            df['label'] = 10
 
         #Remove data before start and after finish
         df = df.loc[(df['COMPUTER_TIME'] > markersTime[0]) & (df['COMPUTER_TIME'] < markersTime[1]) ]

@@ -5,6 +5,7 @@ from pylsl import StreamInfo, StreamOutlet
 import time
 import numpy as np
 import cv2
+import sys
 
 def changeState(im, status, color, time):
     im[1100-200:,10:,:] = 0
@@ -15,6 +16,14 @@ def changeState(im, status, color, time):
     im = cv2.putText(im, 'time: {:02d}:{:02d}'.format(minutes,seconds), (10, 1300), font, 5, color, 5, cv2.LINE_AA)
     return im
 
+#Get cli arguments
+print(sys.argv)
+if len(sys.argv)>=2:
+	totalDuration = int(sys.argv[1])
+else:
+	print("Experiment default duration")
+	totalDuration = 60*5
+
 #Create marker stream
 print("Creating marker stream ...\n")
 info = StreamInfo('ExperimentMarkers', 'Markers', 2, 0, 'string', 'myuidw43536')
@@ -23,7 +32,6 @@ outlet = StreamOutlet(info)
 #Load sound files
 startSound = sa.WaveObject.from_wave_file('./sounds/beep-07.wav')
 endSound = sa.WaveObject.from_wave_file('./sounds/beep-10.wav')
-totalDuration = 60*5
 state = "Stop"
 red   = (0,0,255)
 green = (0,255,0)
@@ -51,6 +59,7 @@ while True:
     if k == 27:         # wait for ESC key to exit
         print("Exit program")
         cv2.destroyAllWindows()
+        break
     elif k == ord('s'): # wait for 's' key to save and exit
         #Count time
         for _ in range(3):
