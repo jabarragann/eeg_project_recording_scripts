@@ -5,10 +5,11 @@ from tobiiglassesctrl import TobiiGlassesController
 import datetime
 from pylsl import StreamInfo, StreamOutlet, local_clock
 import json
+import traceback
 
 class StreamsObj:
 	
-	sf = 250 
+	sf = 50 
 	stream_channels = { 'gaze_position':['gidx','s','gpx','gpy'],
 						'gaze_position_3d':['gidx','s','gp3dx','gp3dy','gp3dz'],
 						'left_pupil_center': ['gidx','s','pcx','pcy','pcz'],
@@ -22,10 +23,10 @@ class StreamsObj:
 	stream_descriptions = { 'gaze_position':      ['gaze_position','2D coordinate',4, sf,'float32','gaze_position_lsl_id'],
 							'gaze_position_3d':   ['gaze_position_3d','3D coordinate',5, sf,'float32','gaze_position__3d_lsl_id'],
 							'left_pupil_center':  ['left_pupil_center','3D coordinate',5, sf,'float32','left_pupil_center_lsl_id'],
-							'left_pupil_diameter':['left_pupil_diameter','mm',1, sf,'float32','left_pupil_diameter_lsl_id'],
+							'left_pupil_diameter':['left_pupil_diameter','mm',3, sf,'float32','left_pupil_diameter_lsl_id'],
 							'left_gaze_direction':['left_gaze_direction','3D coordinate',5, sf,'float32','left_gaze_direction_lsl_id'],
 							'right_pupil_center':  ['right_pupil_center','3D coordinate',5, sf,'float32','right_pupil_center_lsl_id'],
-							'right_pupil_diameter':['right_pupil_diameter','mm',1, sf,'float32','right_pupil_diameter_lsl_id'],
+							'right_pupil_diameter':['right_pupil_diameter','mm',3, sf,'float32','right_pupil_diameter_lsl_id'],
 							'right_gaze_direction':['right_gaze_direction','3D coordinate',5, sf,'float32','right_gaze_direction_lsl_id']
 						  }
 
@@ -34,7 +35,7 @@ class StreamsObj:
 		self.outlets_dict = {}
 
 		#Iterate over all the stream names
-		for key in stream_channels.keys():
+		for key in self.stream_channels.keys():
 			outlet = self.create_stream(key)
 			self.outlets_dict[key] = outlet
 
@@ -45,7 +46,7 @@ class StreamsObj:
 
 		# append channels meta-data
 		channels = info.desc().append_child("channels")
-		for c in stream_channels:
+		for c in self.stream_channels[stream_name]:
 			if c == 'gidx':
 			    channels.append_child("channel")\
 			        .append_child_value("name", c)\
@@ -69,37 +70,28 @@ class StreamsObj:
 
 	def sendData(self, name, data):
 		if name == 'left_eye':
-			data = data.replace("\'", "\"")
-			data = json.loads(pos)
-
 			# 'left_pupil_center': ['gidx','s','pcx','pcy','pcz'],
 			d1 = data['pc']
 			dataToSend = [d1['gidx'], d1['s']] + d1['pc']
 			self.outlets_dict['left_pupil_center'].push_sample(dataToSend)
-			
 			# 'left_pupil_diameter':['gidx','s','pd'],
 			d2 = data['pd']
 			dataToSend = [d2['gidx'], d2['s'], d2['pd']] 
 			self.outlets_dict['left_pupil_diameter'].push_sample(dataToSend)
-
 			# 'left_gaze_direction':['gidx','s','gdx','gdy','gdz'],
 			d3 = data['gd']
 			dataToSend = [d3['gidx'], d3['s']] +d3['gd']
 			self.outlets_dict['left_gaze_direction'].push_sample(dataToSend)
 			
 		elif name == 'right_eye':
-			data = data.replace("\'", "\"")
-			data = json.loads(pos)
 			# 'right_pupil_center': ['gidx','s','pcx','pcy','pcz'],
 			d1 = data['pc']
 			dataToSend = [d1['gidx'], d1['s']] +d1['pc']
 			self.outlets_dict['right_pupil_center'].push_sample(dataToSend)
-
 			# 'right_pupil_diameter':['gidx','s','pd'],
 			d2 = data['pd']
-			dataToSend = [d2['gidx'], d2['s']] +d2['pd']
+			dataToSend = [d2['gidx'], d2['s'], d2['pd']] 
 			self.outlets_dict['right_pupil_diameter'].push_sample(dataToSend)
-			
 			# 'right_gaze_direction':['gidx','s','gdx','gdy','gdz']
 			d3 = data['gd']
 			dataToSend = [d3['gidx'], d3['s']] +d3['gd']
@@ -107,15 +99,11 @@ class StreamsObj:
 
 		elif name == 'gp':
 			#'gaze_position -- > ['gidx','s','gpx','gpy']
-			data = data.replace("\'", "\"")
-			data = json.loads(pos)
 			dataToSend = [data['gidx'], data['s']] +data['gp']
 			self.outlets_dict['gaze_position'].push_sample(dataToSend)
 
 		elif name == 'gp3':
 			#'gaze_position_3d':['gidx','s','gp3dx','gp3dy','gp3dz']
-			data = data.replace("\'", "\"")
-			data = json.loads(pos)
 			dataToSend = [data['gidx'], data['s']] +data['gp3']
 			self.outlets_dict['gaze_position_3d'].push_sample(dataToSend)
 
@@ -155,52 +143,76 @@ def main():
 	#Configure LSL streams
 	lsl_streams = StreamsObj()
 
-	# #Data File
-	# timestamp = '{:%Y-%b-%d %H-%M-%S}'.format(datetime.datetime.now())
-	# file = open("./data/"+timestamp+'_data.txt','w')
+	#Data File
+	timestamp = '{:%Y-%b-%d %H-%M-%S}'.format(datetime.datetime.now())
+	file = open("./data/"+timestamp+'_data.txt','w')
 
-	# #Create Tobii glasses Controller
-	# tobiiglasses = TobiiGlassesController("192.168.71.50")
-	# print(tobiiglasses.get_battery_status())
+	#Create Tobii glasses Controller
+	tobiiglasses = TobiiGlassesController("192.168.71.50")
+	print("Sampling frequency: ",  tobiiglasses.get_et_freq())
+	print(tobiiglasses.get_battery_status())
 
-	# #Calibrate
-	# calibration(tobiiglasses)
+	#Calibrate
+	calibration(tobiiglasses)
 
+	#Start Streaming
+	tobiiglasses.start_streaming()
+	print("Please wait ...")
+	time.sleep(3.0)
+
+	input("Press any key to start streaming")
+
+	current_gidx = -9999
+
+	startTime = time.time()
+	time.sleep(0.1)
+	try:
+		while True:
+				
+				data = tobiiglasses.get_data()
+				
+				#Send data to LSL only there is a new data point
+				if current_gidx < data['gp']['gidx']:
+					
+					current_gidx = data['gp']['gidx']
+
+					#Send data
+					lsl_streams.sendData('left_eye', data['left_eye'])
+					lsl_streams.sendData('right_eye', data['right_eye'])
+					lsl_streams.sendData('gp', data['gp'])
+					lsl_streams.sendData('gp3', data['gp3'])
+
+					#Print Battery status
+					print(tobiiglasses.get_battery_status())
+					
+
+					# endTime = time.time()
+					# print(endTime-startTime)
+					# #print(1/(endTime-startTime))
+					# startTime = time.time()
+					# print(str(data['gp']))
+			
+					
+
+				# printt(str(tobiiglasses.get_battery_status()),file)
+				# printt(str(data['mems']),file)
+				# printt(str(data['left_eye']),file)
+				# printt(str(data['right_eye']),file)
+				# printt(str(data['gp']),file)
+				# printt(str(data['gp3']),file)
+	except Exception as e:
+		print(e)
+		print("Closing Tobii")
+		trace =  traceback.format_exc()
+		print(trace)
 	
-	# #Start Streaming
-	# tobiiglasses.start_streaming()
-	# print("Please wait ...")
-	# time.sleep(3.0)
+	finally:
+		file.close()
+		tobiiglasses.stop_streaming()
+		tobiiglasses.close()	
+		
 
-	# input("Press any key to start streaming")
-
-	# while True:
-	# 	try:
-	# 		data = tobiiglasses.get_data()
-
-	# 		StreamsObj.sendData('left_eye', data['left_eye'])
-	# 		StreamsObj.sendData('right_eye', data['right_eye'])
-	# 		StreamsObj.sendData('gp', data['gp'])
-	# 		StreamsObj.sendData('gp3', data['gp3'])
-
-
-	# 		printt(str(tobiiglasses.get_battery_status()),file)
-	# 		printt("Head unit: %s" % tobiiglasses.get_data()['mems'],file)
-	# 		printt("Left Eye: %s " % tobiiglasses.get_data()['left_eye'],file)
-	# 		printt("Right Eye: %s " % tobiiglasses.get_data()['right_eye'],file)
-	# 		printt("Gaze Position: %s " % tobiiglasses.get_data()['gp'],file)
-	# 		printt("Gaze Position 3D: %s " % tobiiglasses.get_data()['gp3'],file)
-	# 	except Exception as e:
-
-	# 		print(e)
-	# 		print("Closing Tobii")
-	# 		file.close()
-	# 		tobiiglasses.stop_streaming()
-	# 		tobiiglasses.close()
-
-	# 		break
-
-	# print("Closing programme")
+	print("Closing programme")
 
 if __name__ == '__main__':
     main()
