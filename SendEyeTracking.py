@@ -12,22 +12,16 @@ class StreamsObj:
 	sf = 50 
 	stream_channels = { 'gaze_position':['gidx','s','gpx','gpy'],
 						'gaze_position_3d':['gidx','s','gp3dx','gp3dy','gp3dz'],
-						'left_pupil_center': ['gidx','s','pcx','pcy','pcz'],
-						'left_pupil_diameter':['gidx','s','pd'],
-						'left_gaze_direction':['gidx','s','gdx','gdy','gdz'],
-						'right_pupil_center': ['gidx','s','pcx','pcy','pcz'],
-						'right_pupil_diameter':['gidx','s','pd'],
-						'right_gaze_direction':['gidx','s','gdx','gdy','gdz']
-					}
+						'left_eye_data': ['gidx','s','pcx','pcy','pcz','pd','gdx','gdy','gdz'],
+						'right_eye_data': ['gidx','s','pcx','pcy','pcz','pd','gdx','gdy','gdz'],
+						'mems': ['acx','acy','acz','gyx','gyy','gyz']
+					  }
 
 	stream_descriptions = { 'gaze_position':      ['gaze_position','2D coordinate',4, sf,'float32','gaze_position_lsl_id'],
 							'gaze_position_3d':   ['gaze_position_3d','3D coordinate',5, sf,'float32','gaze_position__3d_lsl_id'],
-							'left_pupil_center':  ['left_pupil_center','3D coordinate',5, sf,'float32','left_pupil_center_lsl_id'],
-							'left_pupil_diameter':['left_pupil_diameter','mm',3, sf,'float32','left_pupil_diameter_lsl_id'],
-							'left_gaze_direction':['left_gaze_direction','3D coordinate',5, sf,'float32','left_gaze_direction_lsl_id'],
-							'right_pupil_center':  ['right_pupil_center','3D coordinate',5, sf,'float32','right_pupil_center_lsl_id'],
-							'right_pupil_diameter':['right_pupil_diameter','mm',3, sf,'float32','right_pupil_diameter_lsl_id'],
-							'right_gaze_direction':['right_gaze_direction','3D coordinate',5, sf,'float32','right_gaze_direction_lsl_id']
+							'left_eye_data':  ['left_eye_data','3D coordinate',9, sf,'float32','left_eye_data_lsl_id'],
+							'right_eye_data':  ['right_eye_data','3D coordinate',9, sf,'float32','right_eye_data_lsl_id'],
+							'mems' : ['accelerometer_gyro_tobii', 'g',6,sf,'float32','accelerometer_gyro__lsl_id']
 						  }
 
 	def __init__(self):
@@ -70,32 +64,22 @@ class StreamsObj:
 
 	def sendData(self, name, data):
 		if name == 'left_eye':
-			# 'left_pupil_center': ['gidx','s','pcx','pcy','pcz'],
+			# 'left_eye_data': ['gidx','s','pcx','pcy','pcz','pd','gdx','gdy','gdz']
 			d1 = data['pc']
-			dataToSend = [d1['gidx'], d1['s']] + d1['pc']
-			self.outlets_dict['left_pupil_center'].push_sample(dataToSend)
-			# 'left_pupil_diameter':['gidx','s','pd'],
 			d2 = data['pd']
-			dataToSend = [d2['gidx'], d2['s'], d2['pd']] 
-			self.outlets_dict['left_pupil_diameter'].push_sample(dataToSend)
-			# 'left_gaze_direction':['gidx','s','gdx','gdy','gdz'],
 			d3 = data['gd']
-			dataToSend = [d3['gidx'], d3['s']] +d3['gd']
-			self.outlets_dict['left_gaze_direction'].push_sample(dataToSend)
+			
+			dataToSend = [d1['gidx'], d1['s']] + d1['pc'] + [ d2['pd']] + d3['gd']
+			self.outlets_dict['left_eye_data'].push_sample(dataToSend)
 			
 		elif name == 'right_eye':
-			# 'right_pupil_center': ['gidx','s','pcx','pcy','pcz'],
+			# 'right_eye_data': ['gidx','s','pcx','pcy','pcz','pd','gdx','gdy','gdz'],
 			d1 = data['pc']
-			dataToSend = [d1['gidx'], d1['s']] +d1['pc']
-			self.outlets_dict['right_pupil_center'].push_sample(dataToSend)
-			# 'right_pupil_diameter':['gidx','s','pd'],
 			d2 = data['pd']
-			dataToSend = [d2['gidx'], d2['s'], d2['pd']] 
-			self.outlets_dict['right_pupil_diameter'].push_sample(dataToSend)
-			# 'right_gaze_direction':['gidx','s','gdx','gdy','gdz']
 			d3 = data['gd']
-			dataToSend = [d3['gidx'], d3['s']] +d3['gd']
-			self.outlets_dict['right_gaze_direction'].push_sample(dataToSend)
+
+			dataToSend = [d1['gidx'], d1['s']] + d1['pc'] + [ d2['pd']] + d3['gd']
+			self.outlets_dict['right_eye_data'].push_sample(dataToSend)
 
 		elif name == 'gp':
 			#'gaze_position -- > ['gidx','s','gpx','gpy']
@@ -107,9 +91,14 @@ class StreamsObj:
 			dataToSend = [data['gidx'], data['s']] +data['gp3']
 			self.outlets_dict['gaze_position_3d'].push_sample(dataToSend)
 
+		elif name ==  'mems':
+			ac_data = data['ac']
+			gy_data = data['gy']
+			dataToSend = [] + ac_data['ac'] + gy_data['gy']
+			self.outlets_dict['mems'].push_sample(dataToSend)
+
+
 			
-
-
 def printt(str1,file):
 	
 	print(str1)
@@ -165,6 +154,7 @@ def main():
 	current_gidx = -9999
 
 	startTime = time.time()
+	old_time = time.time()
 	time.sleep(0.1)
 	try:
 		while True:
@@ -173,9 +163,7 @@ def main():
 				
 				#Send data to LSL only there is a new data point
 				if current_gidx < data['gp']['gidx']:
-					
 					current_gidx = data['gp']['gidx']
-
 					#Send data
 					lsl_streams.sendData('left_eye', data['left_eye'])
 					lsl_streams.sendData('right_eye', data['right_eye'])
@@ -184,22 +172,11 @@ def main():
 
 					#Print Battery status
 					print(tobiiglasses.get_battery_status())
-					
 
-					# endTime = time.time()
-					# print(endTime-startTime)
-					# #print(1/(endTime-startTime))
-					# startTime = time.time()
-					# print(str(data['gp']))
-			
+				if time.time() - old_time > 0.02: #Send data every 20ms
+					lsl_streams.sendData('mems',data['mems'])
+					old_time = time.time()
 					
-
-				# printt(str(tobiiglasses.get_battery_status()),file)
-				# printt(str(data['mems']),file)
-				# printt(str(data['left_eye']),file)
-				# printt(str(data['right_eye']),file)
-				# printt(str(data['gp']),file)
-				# printt(str(data['gp3']),file)
 	except Exception as e:
 		print(e)
 		print("Closing Tobii")
