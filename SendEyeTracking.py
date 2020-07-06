@@ -8,8 +8,9 @@ import json
 import traceback
 
 class StreamsObj:
-	
-	sf = 50 
+
+	#Irregular stream of data
+	sf = 0
 	stream_channels = { 'gaze_position':['gidx','s','gpx','gpy'],
 						'gaze_position_3d':['gidx','s','gp3dx','gp3dy','gp3dz'],
 						'left_eye_data': ['gidx','s','pcx','pcy','pcz','pd','gdx','gdy','gdz'],
@@ -99,10 +100,10 @@ class StreamsObj:
 
 
 			
-def printt(str1,file):
+# def printt(str1,file):
 	
-	print(str1)
-	file.write(str1+"\n")
+# 	print(str1)
+# 	file.write(str1+"\n")
 
 def calibration(tobiiglasses):
 	if tobiiglasses.is_recording():

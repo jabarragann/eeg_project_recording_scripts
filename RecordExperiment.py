@@ -51,8 +51,8 @@ cv2.putText(img, 'Press ESC to exit'.format(totalDuration), (10,800), font, 5, (
 # cv2.putText(img, 'Status: {:}'.format(state), (10,1100), font, 5, red, 5, cv2.LINE_AA)
 img = changeState(img,"stop",red,0)
 
-cv2.namedWindow('image', cv2.WINDOW_NORMAL)
-cv2.imshow('image',img)
+cv2.namedWindow('Experiment timer', cv2.WINDOW_NORMAL)
+cv2.imshow('Experiment timer',img)
 
 while True:
     k = cv2.waitKey(0)
@@ -71,7 +71,7 @@ while True:
         outlet.push_sample(["started", "{:0.3f}".format(time.time())])
 
         img =changeState(img, "counting", green,0)
-        cv2.imshow('image', img)
+        cv2.imshow('Experiment timer', img)
 
         startTime = time.time()
         tempBeeps = 0
@@ -86,16 +86,16 @@ while True:
             k2 = cv2.waitKey(1)
             if k2 == ord('q'):
                 img = changeState(img, "stop", red, int(time.time()-startTime))
-                cv2.imshow('image', img)
+                cv2.imshow('Experiment timer', img)
                 break
             else:
                 img = changeState(img, "counting", green, int(time.time() - startTime))
-                cv2.imshow('image', img)
+                cv2.imshow('Experiment timer', img)
 
         outlet.push_sample(["ended", "{:0.3f}".format(time.time())])
         play_obj = endSound.play()
         play_obj.wait_done()
         img = changeState(img, "stop", red, int(time.time() - startTime))
-        cv2.imshow('image', img)
+        cv2.imshow('Experiment timer', img)
 
 

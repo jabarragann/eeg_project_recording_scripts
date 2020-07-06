@@ -38,9 +38,10 @@ for f in dataPath.glob('*.xdf'):
                 markers = stream['time_series']
                 markersTime = stream['time_stamps']
             elif stream['info']['name'][0] == 'NB-2015.10.15' or stream['info']['name'][0] == 'NB-2015.10.16':
-                eegData = stream['time_series']
-                eegInfo = stream['info']
-                eegTime = stream['time_stamps']
+                if stream['footer']['info']['first_timestamp'][0] != '0':
+                    eegData = stream['time_series']
+                    eegInfo = stream['info']
+                    eegTime = stream['time_stamps']
 
         #Get EEG headers
         columns = []
@@ -59,11 +60,11 @@ for f in dataPath.glob('*.xdf'):
         df['COMPUTER_TIME'] = eegTime
 
         #Label
-        if task == "Baseline": #Baseline
+        if task == "Baseline" or task == 'BASELINE': #Baseline
             df['label'] = 0
-        elif task == "Normal" or task == "Easy": #Low Workload
+        elif task == "Normal" or task == "Easy" or task == 'Low' or task == 'LOW': #Low Workload
             df['label'] = 5
-        elif task == "Inv" or task == "High": # high Workload
+        elif task == "Inv" or task == "High" or task == 'HIGH': # high Workload
             df['label'] = 10
 
         #Remove data before start and after finish
