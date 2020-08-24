@@ -2,10 +2,14 @@ import numpy as np
 import mne
 import pandas as pd
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 # file = Path('./data-processed/juan_S3_T5_epoc.txt')
-file = Path('./data-processed/JuanExp2/Juan_S1_T1_Baseline.txt')
+# file = Path('./data-processed/U05_S1_T01_pegNormal.txt')
 # file = Path('./data-processed/Karuna_S3_T2_Inv.txt')
+# file = Path('./data-processed/EX1U07_S1_T01_Baseline.txt')
+# file = Path('./data-processed/EX1U07_S1_T01_pegNormal.txt')
+file = Path('./data-processed/EX1U08_S1_T03_pegNormal.txt')
 
 EEG_channels = ["FP1","FP2","AF3","AF4","F7","F3","FZ","F4",
                 "F8","FC5","FC1","FC2","FC6","T7","C3","CZ",
