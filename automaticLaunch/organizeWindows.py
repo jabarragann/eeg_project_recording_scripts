@@ -4,15 +4,19 @@ import time
 windowDict = {"BrainVision LSL Viewer":None,
 			  "Figure 1: LSL:Stream'Shimmer_ppg'":None,
 			  "Figure 2: LSL:Stream'Shimmer_gsr'":None,
+			  "Figure 3: LSL:Stream'NB-2015.10.15'":None,
+			  "Figure 3: LSL:Stream'NB-2015.10.16'":None,
 			  "Experiment timer": None,
 			  "Lab Recorder": None
 			  }
 
-windowParameters =  { "BrainVision LSL Viewer":{"topLeft":[320,0],"width":1624,"height":700,'activate':False},
-					  "Figure 1: LSL:Stream'Shimmer_ppg'":{"topLeft":[-34,0],"width":396,"height":546,'activate':True},
-					  "Figure 2: LSL:Stream'Shimmer_gsr'":{"topLeft":[-34,532],"width":396,"height":513,'activate':True},
-					  "Experiment timer": {"topLeft":[1507,670],"width":420,"height":375,'activate':True},
-					  "Lab Recorder": {"topLeft":[838, 670],"width":684,"height":375,'activate':True}
+windowParameters =  { "BrainVision LSL Viewer":{"topLeft":[320,0],"width":1624,"height":700},
+					  "Figure 1: LSL:Stream'Shimmer_ppg'":{"topLeft":[-34,0],"width":396,"height":546},
+					  "Figure 2: LSL:Stream'Shimmer_gsr'":{"topLeft":[-34,532],"width":396,"height":513},
+					  "Figure 3: LSL:Stream'NB-2015.10.15'":{"topLeft":[320,0],"width":1624,"height":700},
+					  "Figure 3: LSL:Stream'NB-2015.10.16'":{"topLeft":[320,0],"width":1624,"height":700},
+					  "Experiment timer": {"topLeft":[1507,670],"width":420,"height":375},
+					  "Lab Recorder": {"topLeft":[838, 670],"width":684,"height":375}
 					}
 
 if __name__ == "__main__":
