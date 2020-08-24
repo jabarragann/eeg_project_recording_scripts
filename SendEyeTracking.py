@@ -18,11 +18,11 @@ class StreamsObj:
 						'mems': ['acx','acy','acz','gyx','gyy','gyz']
 					  }
 
-	stream_descriptions = { 'gaze_position':      ['gaze_position','2D coordinate',4, sf,'float32','gaze_position_lsl_id'],
-							'gaze_position_3d':   ['gaze_position_3d','3D coordinate',5, sf,'float32','gaze_position__3d_lsl_id'],
-							'left_eye_data':  ['left_eye_data','3D coordinate',9, sf,'float32','left_eye_data_lsl_id'],
-							'right_eye_data':  ['right_eye_data','3D coordinate',9, sf,'float32','right_eye_data_lsl_id'],
-							'mems' : ['accelerometer_gyro_tobii', 'g',6,sf,'float32','accelerometer_gyro__lsl_id']
+	stream_descriptions = { 'gaze_position':      ['gaze_position','eye_tracker',4, sf,'float32','gaze_position_lsl_id'],
+							'gaze_position_3d':   ['gaze_position_3d','eye_tracker',5, sf,'float32','gaze_position__3d_lsl_id'],
+							'left_eye_data':  ['left_eye_data','eye_tracker',9, sf,'float32','left_eye_data_lsl_id'],
+							'right_eye_data':  ['right_eye_data','eye_tracker',9, sf,'float32','right_eye_data_lsl_id'],
+							'mems' : ['accelerometer_gyro_tobii', 'eye_tracker',6,sf,'float32','accelerometer_gyro__lsl_id']
 						  }
 
 	def __init__(self):
@@ -57,7 +57,6 @@ class StreamsObj:
 			        .append_child_value("name", c)\
 			        .append_child_value("unit", "mm")\
 			        .append_child_value("type", "coordinate")
-
 
 		outlet = StreamOutlet(info)
 
@@ -100,10 +99,6 @@ class StreamsObj:
 
 
 			
-# def printt(str1,file):
-	
-# 	print(str1)
-# 	file.write(str1+"\n")
 
 def calibration(tobiiglasses):
 	if tobiiglasses.is_recording():
@@ -125,7 +120,6 @@ def calibration(tobiiglasses):
 	if res is False:
 		print("Calibration failed!")
 		exit(1)
-
 
 
 def main():

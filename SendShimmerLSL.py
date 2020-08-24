@@ -94,6 +94,7 @@ if __name__ == '__main__':
         gsrInfo = StreamInfo('Shimmer_gsr', 'GSR', 1, sampling_freq, 'float32', 'gsrId2_ohm')
         gsrOutlet = StreamOutlet(gsrInfo)
 
+        print("Streaming data ...")
         try:
             # Take numb_seconds seconds of data
             while True:
