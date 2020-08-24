@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	setupTab(additionalCommand = "write", arg="LabRecorder.exe -c " + expSettingsPath)
 	auto.hotkey('alt','right', interval=interval_writing)
 	#Setup tab 5 G.tec LSL
-	setupTab(additionalCommand = "write", arg="python SendGnautilusLSL.py")
+	setupTab(additionalCommand = "write", arg="python SendGnautilusAlternative.py")
 	auto.hotkey('alt','right', interval=interval_writing)
 	# setupTab(additionalCommand = "goto", arg=gtecLslPath)
 	# auto.write(".\\gNEEDaccess.exe", interval=interval_writing)
