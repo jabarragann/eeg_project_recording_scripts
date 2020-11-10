@@ -17,7 +17,7 @@ difference = t2 - t1
 
 
 dataPath  = Path('./data_raw/')
-experiment = 2
+
 for f in dataPath.glob('*.xdf'):
 
     #Load xdf files
@@ -25,10 +25,10 @@ for f in dataPath.glob('*.xdf'):
         file = f
 
         # Rename files --> remove identifiers
-        uid = re.findall('.+(?=_S[0-9]+_T0[0-9][0-9]_)', file.name)[0]
-        session = int(re.findall('(?<=_S)[0-9]+(?=_T0[0-9][0-9]_)', file.name)[0])
-        trial = int(re.findall('(?<=_S[0-9]{2}_T)[0-9]{3}(?=_)', file.name)[0])
-        task = re.findall('(?<=_S[0-9]{2}_T[0-9]{3}_).+(?=.xdf)', file.name)[0]
+        uid = re.findall('.+(?=_S[0-9][0-9]+_T[0-9][0-9]_)', file.name)[0]
+        session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9][0-9]_)', file.name)[0])
+        trial = int(re.findall('(?<=_S[0-9]{2}_T)[0-9]{2}(?=_)', file.name)[0])
+        task = re.findall('(?<=_S[0-9]{2}_T[0-9]{2}_).+(?=_raw\.xdf)', file.name)[0]
 
         dstPath = Path('./data_txt/') / "{:}_S{:02d}_T{:02d}_{:}_raw.txt".format(uid, session, trial, task)
 
