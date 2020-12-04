@@ -1,4 +1,3 @@
-
 import random
 import pyxdf
 import matplotlib.pyplot as plt
@@ -9,11 +8,6 @@ import copy
 from pathlib import Path
 from pylsl import local_clock
 import time
-
-#Calculate difference between LSL clock and computer clock
-t1 = local_clock()
-t2 = time.time()
-difference = t2 - t1
 
 
 dataPath  = Path('./data_raw/')
@@ -49,6 +43,9 @@ for f in dataPath.glob('*.xdf'):
                     eegInfo = stream['info']
                     eegTime = stream['time_stamps']
 
+        #Difference of LSL time and computer time
+        difference = float(markers[0][1]) - markersTime[0]
+
         #Get EEG headers
         columns = []
         listOfChannels = eegInfo['desc'][0]['channels'][0]['channel']
@@ -64,6 +61,7 @@ for f in dataPath.glob('*.xdf'):
 
         #Create data frame
         df =  pd.DataFrame(data=eegData, index=None, columns=columns)
+
 
         #Add label and time stamps
         df['COMPUTER_TIME'] = eegTime
