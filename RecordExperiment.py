@@ -54,8 +54,10 @@ img = changeState(img,"stop",red,0)
 cv2.namedWindow('Experiment timer', cv2.WINDOW_NORMAL)
 cv2.imshow('Experiment timer',img)
 
-while True:
-    k = cv2.waitKey(0)
+while cv2.getWindowProperty('Experiment timer', 0) >= 0:
+    cv2.imshow('Experiment timer', img)
+    k = cv2.waitKey(50)
+
     if k == 27:         # wait for ESC key to exit
         print("Exit program")
         cv2.destroyAllWindows()
@@ -97,5 +99,4 @@ while True:
         play_obj.wait_done()
         img = changeState(img, "stop", red, int(time.time() - startTime))
         cv2.imshow('Experiment timer', img)
-
 
