@@ -2,15 +2,17 @@ import numpy as np
 import random
 
 def create_sequence_of_deviant(num_s,ratio_deviant,seed):
-    random.seed(seed)
-    l =  list(range(num_s))
+    if seed is not None:
+        random.seed(seed)
+
+    l =  list(range(5, num_s))
     deviants = []
 
     nu_deviants = int(num_s * ratio_deviant)
 
     while len(deviants) < nu_deviants:
         x = random.sample(l,1)[0]
-        if not any([i in deviants for i in range(x-2,x+3)]):
+        if not any([i in deviants for i in range(x-3,x+4)]):
             deviants.append(x)
             try:
                 [l.remove(j) for j in range(x-2,x+3)]
