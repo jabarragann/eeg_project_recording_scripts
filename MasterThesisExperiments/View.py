@@ -66,8 +66,14 @@ class View(Thread):
                 k = cv2.waitKey(30)
 
             self.frame = self.update_view(self.frame, self.controller.task_state, self.red, time=int(new_time))
+
+            # cv2.imshow(self.wind_name, self.frame)
+            # k = cv2.waitKey(0)
+            #
             cv2.imshow(self.wind_name, self.frame)
-            k = cv2.waitKey(0)
+            while cv2.waitKey(100) != 27:  # loop if not get ESC
+                if cv2.getWindowProperty(self.wind_name, cv2.WND_PROP_VISIBLE) <= 0:
+                    break
 
             self.controller.running = False
 
