@@ -1,11 +1,14 @@
+"""
+Use this for any file structure
+"""
+
 import cv2
 import numpy as np
 from pathlib import Path
 import pandas as pd
 import re
 
-def trimVideoToSignals(new_video_path,new_ts_path,video_path, ts_path, eeg_file_path, show=False):
-
+def trimVideoToSignals(new_video_path, new_ts_path, video_path, ts_path, eeg_file_path, show=False):
     ts_file = pd.read_csv(ts_path)
     ts_file["ecm_ts"] = ts_file["ecm_ts"] * 1e-9
     eeg_file = pd.read_csv(eeg_file_path)
@@ -35,7 +38,8 @@ def trimVideoToSignals(new_video_path,new_ts_path,video_path, ts_path, eeg_file_
     # Output video
     frame_width = 640
     frame_height = 480
-    out = cv2.VideoWriter(str(new_video_path), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 30, (frame_width, frame_height))
+    out = cv2.VideoWriter(str(new_video_path), cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 30,
+                          (frame_width, frame_height))
 
     # Check if camera opened successfully
     if not cap.isOpened():
@@ -55,7 +59,7 @@ def trimVideoToSignals(new_video_path,new_ts_path,video_path, ts_path, eeg_file_
             if show:
                 cv2.imshow('Frame', frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
-                  break
+                    break
         else:
             break
 
@@ -63,12 +67,13 @@ def trimVideoToSignals(new_video_path,new_ts_path,video_path, ts_path, eeg_file_
     out.release()
     cv2.destroyAllWindows()
 
-def iterateOverAllEegFiles():
-    root_path = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments3-Data\BleedingTests\Juan\12-07-20")
-    data_path = root_path / r"txt/"
 
-    video_path = root_path / r"video_right_color.avi"
-    timestamps_path = root_path / r"video_right_color_ts.txt"
+def iterateOverAllEegFiles():
+    root_path = Path(r"./")
+    data_path = root_path / r"data_txt"
+
+    video_path = root_path / r"video/video_right_color.avi"
+    timestamps_path = root_path / r"video/video_right_color_ts.txt"
 
     for file in data_path.glob("*.txt"):
         uid = re.findall('.+(?=_S[0-9][0-9]+_T[0-9][0-9]_)', file.name)[0]
@@ -77,15 +82,15 @@ def iterateOverAllEegFiles():
         task = re.findall('(?<=_S[0-9]{2}_T[0-9]{2}_).+(?=_raw\.txt)', file.name)[0]
 
         if task == "Baseline":
-            continue #No video for baseline.
+            continue  # No video for baseline.
         else:
             print("Processing", uid, session, trial, task)
-            new_video_name = "{:}_S{:02d}_T{:02d}_{:}_raw_video_right.avi".format( uid, int(session), int(trial), task)
-            new_video_path = (root_path / "videos") / new_video_name
+            new_video_name = "{:}_S{:02d}_T{:02d}_{:}_raw_video_right.avi".format(uid, int(session), int(trial), task)
+            new_video_path = (root_path / "video") / new_video_name
             new_ts_name = "{:}_S{:02d}_T{:02d}_{:}_raw_video_right_ts.txt".format(uid, int(session), int(trial), task)
-            new_ts_path = (root_path / "videos") / new_ts_name
-            trimVideoToSignals(new_video_path,new_ts_path ,video_path,timestamps_path, file)
+            new_ts_path = (root_path / "video") / new_ts_name
+            trimVideoToSignals(new_video_path, new_ts_path, video_path, timestamps_path, file)
+
 
 if __name__ == "__main__":
-
     iterateOverAllEegFiles()

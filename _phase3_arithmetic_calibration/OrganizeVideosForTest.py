@@ -5,7 +5,7 @@ from shutil import copyfile
 
 if __name__ == "__main__":
 
-    rootPath = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments3-Data\CalibrationProcedure-SurgicalTasks")
+    rootPath = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments3-Data\BleedingTests\Juan\12-07-20")
     videoPath = rootPath / "videos"
     eegPath = rootPath / "txt"
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
         newPath.mkdir()
 
     #Renaming the files
-    for video_file in videoPath.rglob("*.avi"):
+    for video_file in videoPath.glob("*.avi"):
 
         uid = re.findall('.+(?=_S[0-9][0-9]+_T[0-9][0-9]_)', video_file.name)[0]
         session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9][0-9]_)', video_file.name)[0])
@@ -24,7 +24,8 @@ if __name__ == "__main__":
         print(uid, session, trial, task)
         parts = video_file.with_suffix('').name.split("_")
         ts_file = videoPath / ("_".join(parts[:7]) + "_ts.txt")
-        eeg_file = eegPath / uid/ ("_".join(parts[:5]) + ".txt")
+        # eeg_file = eegPath / uid / ("_".join(parts[:5]) + ".txt")
+        eeg_file = eegPath  / ("_".join(parts[:5]) + ".txt")
 
         print(video_file)
         print(ts_file, ts_file.exists())

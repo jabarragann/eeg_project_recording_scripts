@@ -35,6 +35,8 @@ for f in dataPath.glob('*.xdf'):
         #Get data and experiment markers
         for stream in data:
             if stream['info']['name'][0] == 'ExperimentMarkers':
+                if stream['time_series'][0][0] == '':
+                    continue
                 markers = stream['time_series']
                 markersTime = stream['time_stamps']
             elif stream['info']['name'][0] == 'NB-2015.10.15' or stream['info']['name'][0] == 'NB-2015.10.16':
@@ -64,23 +66,14 @@ for f in dataPath.glob('*.xdf'):
 
 
         #Add label and time stamps
-        df['COMPUTER_TIME'] = eegTime
-
-        #Label
-        if task == "Baseline" or task == 'BASELINE': #Baseline
-            df['label'] = 0
-        elif task == "Normal" or task == "Easy" or task == 'Low' or task == 'LOW': #Low Workload
-            df['label'] = 5
-        elif task == "Inv" or task =='inv' or task == "High" or task == 'HIGH': # high Workload
-            df['label'] = 10
+        df['LSL_TIME'] = eegTime
 
         #Remove data before start and after finish
-        df = df.loc[(df['COMPUTER_TIME'] > markersTime[0]) & (df['COMPUTER_TIME'] < markersTime[1]) ]
+        df = df.loc[(df['LSL_TIME'] > markersTime[0]) & (df['LSL_TIME'] < markersTime[1]) ]
 
         #Update timestamps to computer time
-        df['COMPUTER_TIME'] = df['COMPUTER_TIME'] + difference
+        df['COMPUTER_TIME'] = df['LSL_TIME'] + difference
 
         print(len(df['COMPUTER_TIME']))
         #Save to CSV
-
         df.to_csv(dstPath,index=None)
