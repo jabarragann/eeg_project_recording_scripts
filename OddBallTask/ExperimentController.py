@@ -1,6 +1,7 @@
 import sys
 sys.path.append('./../')
-from OddBallTask.OddBallModule import OddBallModule
+# from OddBallTask.OddBallModule import OddBallModule
+from OddBallTask.OddBallModuleModification import OddBallModule
 import threading
 from OddBallTask.Timer import OpencvTimer
 

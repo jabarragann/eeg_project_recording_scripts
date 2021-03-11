@@ -13,10 +13,10 @@ def main():
     state = False
     try:
         while True:
-            command = "500" if state else "1000"
+            command = "500" if state else "1100"
             state = not state
             outlet.push_sample([command])
-            sleep_time = random.randint(20, 40)
+            sleep_time = random.randint(18, 28)
             print("New ITI for odd ball is ",command)
             print("Sleeping for ", sleep_time)
             time.sleep(sleep_time)
