@@ -31,6 +31,8 @@ for f in dataPath.glob('*.xdf'):
         print("dstPath", dstPath)
 
         data, header = pyxdf.load_xdf(file)
+        stream_names = [stream['info']['name'][0] for stream in data]
+        print(stream_names)
 
         #Get data and experiment markers
         for stream in data:
