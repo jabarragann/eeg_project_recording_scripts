@@ -18,6 +18,11 @@ class StreamsObj:
 						'mems': ['acx','acy','acz','gyx','gyy','gyz']
 					  }
 
+	# stream_channels = {'gaze_position': ['gidx', 's', 'gpx', 'gpy'],
+	# 				   'left_eye_data': ['gidx', 's','pd'],
+	# 				   'right_eye_data': ['gidx', 's', 'pd'],
+	# 				   'mems': ['acx', 'acy', 'acz', 'gyx', 'gyy', 'gyz']}
+
 	stream_descriptions = { 'gaze_position':      ['gaze_position','eye_tracker',4, sf,'float32','gaze_position_lsl_id'],
 							'gaze_position_3d':   ['gaze_position_3d','eye_tracker',5, sf,'float32','gaze_position__3d_lsl_id'],
 							'left_eye_data':  ['left_eye_data','eye_tracker',9, sf,'float32','left_eye_data_lsl_id'],
@@ -137,7 +142,7 @@ def main():
 	print(tobiiglasses.get_battery_status())
 
 	#Calibrate
-	calibration(tobiiglasses)
+	# calibration(tobiiglasses)
 
 	#Start Streaming
 	tobiiglasses.start_streaming()
@@ -159,6 +164,7 @@ def main():
 				#Send data to LSL only there is a new data point
 				if current_gidx < data['gp']['gidx']:
 					current_gidx = data['gp']['gidx']
+					print(data['gp'])
 					#Send data
 					lsl_streams.sendData('left_eye', data['left_eye'])
 					lsl_streams.sendData('right_eye', data['right_eye'])
@@ -166,7 +172,7 @@ def main():
 					lsl_streams.sendData('gp3', data['gp3'])
 
 					#Print Battery status
-					print(tobiiglasses.get_battery_status())
+					# print(tobiiglasses.get_battery_status())
 
 				if time.time() - old_time > 0.02: #Send data every 20ms
 					lsl_streams.sendData('mems',data['mems'])

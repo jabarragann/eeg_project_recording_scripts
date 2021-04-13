@@ -21,6 +21,35 @@ def create_sequence_of_deviant(num_s,ratio_deviant,seed):
     deviants = np.sort(np.array(deviants))
     return deviants
 
+def create_sequence_of_deviant_with_multiple(num_s,ratio_deviant,seed):
+    if seed is not None:
+        random.seed(seed)
+
+    l =  list(range(5, num_s))
+
+
+    deviants = []
+    type_of_alarm = []
+
+    nu_deviants = int(num_s * ratio_deviant)
+    random.random()
+    while len(deviants) < nu_deviants:
+        x = random.sample(l,1)[0]
+        type = random.random()
+
+        if not any([i in deviants for i in range(x-1,x+2)]):
+            deviants.append(x)
+            type_of_alarm.append("a" if type > 0.5 else "b")
+            # type_of_alarm.append("a")
+            try:
+                [l.remove(j) for j in range(x-1,x+2)]
+            except Exception as e:
+                pass
+    deviants = np.sort(np.array(deviants))
+    type_of_alarm = np.array(type_of_alarm)
+
+    return deviants, type_of_alarm
+
 def create_sounds(freq, duration):
     #Sounds parameters
     Fs = 44100

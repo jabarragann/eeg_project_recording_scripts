@@ -24,12 +24,12 @@ for f in dataPath.glob('*.xdf'):
     if len(re.findall(".xdf", f.name))>0:
         file = f
 
-        task = re.findall("(?<=T[0-9]{3}_).+(?=\.xdf)", file.name)[0]
-        subject =  re.findall(".+(?=_S[0-9]{3})", file.name)[0]
-        session =  int(re.findall("(?<=_S)[0-9]{3}(?=_T)", file.name)[0])
-        trial =  int(re.findall("(?<=_T)[0-9]{3}(?=_)", file.name)[0])
+        task = re.findall("(?<=T[0-9]{2}_).+(?=\.xdf)", file.name)[0]
+        subject =  re.findall(".+(?=_S[0-9]{1})", file.name)[0]
+        session =  int(re.findall("(?<=_S)[0-9]{1}(?=_T)", file.name)[0])
+        trial =  int(re.findall("(?<=_T)[0-9]{2}(?=_)", file.name)[0])
 
-        dstPath1 = Path('./data-processed/') / "{:}_S{:d}_T{:d}_{:}_shimmer_gsr.txt".format(subject,session, trial,task)
+        dstPath1 = Path('./data-processed/') / "{:}_S{:d}_T{:d}_{:}_shimmer_ppg.txt".format(subject,session, trial,task)
 
         data, header = pyxdf.load_xdf(file)
 
@@ -38,7 +38,7 @@ for f in dataPath.glob('*.xdf'):
             if stream['info']['name'][0] == 'ExperimentMarkers':
                 markers = stream['time_series']
                 markersTime = stream['time_stamps']
-            elif stream['info']['name'][0] == 'Shimmer_gsr' :
+            elif stream['info']['name'][0] == 'Shimmer_ppg' :
                 if stream['footer']['info']['first_timestamp'][0] != '0':
                     eegData = stream['time_series']
                     eegInfo = stream['info']

@@ -14,7 +14,7 @@ import json
 
 if __name__ == "__main__":
 
-    file  = Path('./data/UJuan_S01_T01_BloodValidation.xdf')
+    file  = Path('./data/UDani_S05_T01_validationbloodcountinously_raw.xdf')
     dst_path = Path('./results/') / file.with_suffix("").name
 
     if not dst_path.exists():

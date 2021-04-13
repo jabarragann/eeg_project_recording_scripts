@@ -14,6 +14,7 @@ dataPath  = Path('./data_raw/')
 
 def crop_df_with_markers(df, markers, markersTime):
     df = df.loc[(df['LSL_TIME'] > markersTime[0]) & (df['LSL_TIME'] < markersTime[1])]
+
     return df
 
 def get_columns(stream):
