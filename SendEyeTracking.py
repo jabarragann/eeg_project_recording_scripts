@@ -132,9 +132,7 @@ def main():
 	#Configure LSL streams
 	lsl_streams = StreamsObj()
 
-	#Data File
-	timestamp = '{:%Y-%b-%d %H-%M-%S}'.format(datetime.datetime.now())
-	file = open("./data/"+timestamp+'_data.txt','w')
+
 
 	#Create Tobii glasses Controller
 	tobiiglasses = TobiiGlassesController("192.168.71.50")
