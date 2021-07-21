@@ -9,8 +9,8 @@ def obtain_command_args():
     #Socket arguments
     parser.add_argument('--server_address', default="169.254.217.30", help='server socket. Replace it by the ip of the ethernet port')
     parser.add_argument('--server_port', default="5555", type=int, help='server port')
-
-    parser.add_argument('--autonomy', action='store_true', default=False, help='Initialize autonomy')
+    parser.add_argument('--autonomy', action='store_true', default=False, help='If true, then the cognitive load will be used to control autonomy.'\
+                                                                               ' Default(False), i.e., manual teleoperation')
     parser.add_argument('--debug', action='store_true', default=False, help='Skip serial and socket connections')
     args = parser.parse_args()
 

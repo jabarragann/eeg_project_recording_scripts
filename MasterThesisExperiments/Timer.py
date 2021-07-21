@@ -7,6 +7,7 @@ import simpleaudio as sa
 import serial
 import traceback
 import socket
+
 def create_lsl_stream(name=None, type=None, channel_count=None, nominal_srate=None,
                       channel_format=None, source_id=None):
     info = StreamInfo(name=name, type=type, channel_count=channel_count, nominal_srate=nominal_srate,
@@ -70,7 +71,7 @@ class TimerModule(Thread):
     def socket_command(self, cmd):
         list_of_cmds = ["turn on autonomy", "turn off autonomy",
                         "start experiment","end experiment",
-                        "close" ]
+                        "close", "cognitive trigger" ]
         if cmd in list_of_cmds:
             answer = self.write_read_socket(cmd)
         else:
@@ -144,7 +145,7 @@ class TimerModule(Thread):
             self.end_signal()
             self.outlet.push_sample(["ended", "{:0.3f}".format(time.time())])
             self.arduino_command("turn off motors")
-            self.socket_command("turn off autonomy")
+            #self.socket_command("turn off autonomy")
             self.socket_command("end experiment")
             self.controller.task_state = "finished"
 
@@ -166,6 +167,28 @@ class TimerModule(Thread):
         play_obj = self.end_sound.play()
         play_obj.wait_done()
 
+    def listen_for_cognitive_predictions(self):
+        count = 0
+        while self.controller.running and self.controller.args.autonomy:
+            streams = resolve_byprop('name', 'AssistantState', timeout=1)
+
+            if len(streams) > 0:
+                inlet = StreamInlet(streams[0])
+                print("Cognitive state stream")
+                while self.controller.running:
+                    sample, timestamp = inlet.pull_sample(timeout=1)
+                    #Logic to activate autonomy
+                    if sample is not None:
+                        print(sample, timestamp)
+                        if sample[0] =='Suction':
+                            #send autonomy command
+                            self.start_signal()
+                            self.socket_command("cognitive trigger")
+                    time.sleep(0.1)
+                print('Close listening socket')
+            else:
+                print(count, "AssistantState inlet not found. open real-time interface")
+            count += 1
     def listen_mouse_events(self):
         count = 0
         while self.controller.running:

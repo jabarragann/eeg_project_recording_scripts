@@ -14,7 +14,8 @@ class Controller:
         self.running = True
 
         self.timer_module = TimerModule(self)
-        self.listener = threading.Thread(target=self.timer_module.listen_mouse_events)
+        self.mouse_listener = threading.Thread(target=self.timer_module.listen_mouse_events)
+        self.cognitive_predictions_listener = threading.Thread(target=self.timer_module.listen_for_cognitive_predictions)
         self.view_module = View(self)
 
 
@@ -26,7 +27,9 @@ class Controller:
 
     def start(self):
         self.view_module.start()
-        self.listener.start()
+        self.mouse_listener.start()
+        if self.args.autonomy:
+            self.cognitive_predictions_listener.start()
         self.timer_module.start()
 
         self.view_module.join()
