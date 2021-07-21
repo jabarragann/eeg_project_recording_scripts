@@ -183,7 +183,6 @@ def main():
 		print(trace)
 	
 	finally:
-		file.close()
 		tobiiglasses.stop_streaming()
 		tobiiglasses.close()	
 		
