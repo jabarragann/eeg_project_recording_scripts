@@ -1,19 +1,21 @@
 import re
 from pathlib import Path
 import shutil
-
+from _phase3_arithmetic_calibration.RegexFunctions import get_information,get_information2
 if __name__ == "__main__":
 
     src_path = Path("./").resolve()
-    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments3-Data\CalibrationProcedure-NeedlePasssingBlood')
+    #dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-IU-experiments')
+    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData')
+    #dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments')
 
-    for p,dst_2 in [('data_edf','edf'),('data_raw','raw'),('data_txt','txt'),('eye_tracker_txt','eyetracker')]:
+    for p,dst_2 in [('data_edf','edf'),('data_raw','raw'),('data_txt','txt'),('eye_tracker_txt','eyetracker'),('video_trimmed','video_trimmed')]:
         p2 = src_path/p
 
         print(p)
         for file in p2.rglob("*"):
-            uid = re.findall('.+(?=_S[0-9]+_T[0-9][0-9]_)', file.name)[0][1:]
-            session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9][0-9]_)', file.name)[0])
+            uid = re.findall('.+(?=_S[0-9]+_T[0-9]+_)', file.name)[0][1:]
+            session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9]+_)', file.name)[0])
 
             dst_final_final = dst_path / dst_2 / uid / "S{:02d}".format(session)
 

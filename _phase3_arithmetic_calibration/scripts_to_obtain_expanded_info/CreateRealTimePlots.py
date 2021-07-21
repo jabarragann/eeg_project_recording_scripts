@@ -1,37 +1,28 @@
 from pathlib import Path
-import re
-import pyxdf
-import numpy as np
-import json
 import pandas as pd
 import matplotlib.pyplot as plt
-
-def get_information(file):
-    uid = re.findall('.+(?=_S[0-9]+_T[0-9]{3}_)', file.name)[0]
-    session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9]{3})', file.name)[0])
-    trial = int(re.findall('(?<=_S[0-9]{1}_T)[0-9]{3}(?=_)', file.name)[0])
-    task = re.findall('(?<=_S[0-9]{1}_T[0-9]{3}_).+(?=\.xdf)', file.name)[0]
-
-    return uid, session, trial, task
-
-def get_information2(file):
-    uid = re.findall('.+(?=_SRE+_T[0-9]{3}_)', file.name)[0]
-    session = "RE"
-    trial = int(re.findall('(?<=_SRE_T)[0-9]{3}(?=_)', file.name)[0])
-    task = re.findall('(?<=_SRE_T[0-9]{3}_).+(?=\.xdf)', file.name)[0]
-
-    return uid, session, trial, task
+from _phase3_arithmetic_calibration.RegexFunctions import get_information, get_information3
 
 def main():
-    src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\raw')
-    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\expanded')
-    metrics_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\metrics\real-time-plots')
+    # src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\raw')
+    # dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\expanded')
+    # metrics_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\metrics\real-time-plots')
+
+    # src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments\raw')
+    # dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments\expanded')
+    # metrics_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments\metrics\real-time-plots')
+
+    src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData\raw')
+    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData\expanded')
+    metrics_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData\metrics\real-time-plots')
 
     for file in src_path.rglob("*.xdf"):
-            if 'experiment01' in file.name and 'realtime' in file.name:
+            if 'experiment01' in file.name and 'realtime' in file.name or True:
+                if not metrics_path.exists():
+                    metrics_path.mkdir(parents=True)
 
                 try:
-                    uid, session, trial, task = get_information2(file)
+                    uid, session, trial, task = get_information3(file)
                 except Exception:
                     continue
 

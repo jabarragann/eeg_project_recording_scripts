@@ -7,6 +7,7 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import re
+from _phase3_arithmetic_calibration.RegexFunctions import get_information2, get_information
 
 def trimVideoToSignals(new_video_path, new_ts_path, video_path, ts_path, eeg_file_path, show=False):
     ts_file = pd.read_csv(ts_path)
@@ -67,8 +68,35 @@ def trimVideoToSignals(new_video_path, new_ts_path, video_path, ts_path, eeg_fil
     out.release()
     cv2.destroyAllWindows()
 
+def trim_video_with_eeg():
+    """
+    Method to trim videos from file. Video and xdf need to have the same name.
+    :return:
+    """
+    datapath = Path("./data_raw")
+    video_path = Path("./video")
+    video_dst_path = Path("./video_trimmed")
+
+    for f in datapath.glob("*.xdf"):
+        file = f
+        uid, session, trial, task = get_information(file) #If any problem check the regex functions.
+        eeg_path = Path('./data_txt/') / "{:}_S{:02d}_T{:02d}_{:}_raw.txt".format(uid, session, trial, task)
+        video_raw_path = video_path / (f.with_suffix("").name+"_left_color.avi")
+        ts_raw_path =  video_path / (f.with_suffix("").name+"_left_color_ts.txt")
+        new_video_path = video_dst_path / video_raw_path.name.replace("RE",str(session))
+        new_ts_path = video_dst_path / ts_raw_path.name.replace("RE",str(session))
+        print(video_raw_path)
+        print(new_video_path)
+        print(eeg_path)
+        print(new_ts_path)
+
+        trimVideoToSignals(new_video_path,new_ts_path,video_raw_path,ts_raw_path,eeg_path)
 
 def iterateOverAllEegFiles():
+    """
+    Method to trim trials from a single big video
+    :return:
+    """
     root_path = Path(r"./")
     data_path = root_path / r"data_txt"
 
@@ -93,4 +121,5 @@ def iterateOverAllEegFiles():
 
 
 if __name__ == "__main__":
-    iterateOverAllEegFiles()
+    #iterateOverAllEegFiles()
+    trim_video_with_eeg()

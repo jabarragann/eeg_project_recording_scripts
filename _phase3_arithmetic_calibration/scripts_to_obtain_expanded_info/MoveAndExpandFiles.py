@@ -1,9 +1,10 @@
 from pathlib import Path
-import re
 import pyxdf
 import numpy as np
 import json
 import pandas as pd
+from _phase3_arithmetic_calibration.RegexFunctions import  get_information, get_information3
+
 
 def get_experimental_marker(data):
     # Get data and experiment markers
@@ -18,21 +19,6 @@ def get_experimental_marker(data):
 
     raise Exception("No experimental markers found")
 
-def get_information(file):
-    uid = re.findall('.+(?=_S[0-9]+_T[0-9]{3}_)', file.name)[0]
-    session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9]{3})', file.name)[0])
-    trial = int(re.findall('(?<=_S[0-9]{1}_T)[0-9]{3}(?=_)', file.name)[0])
-    task = re.findall('(?<=_S[0-9]{1}_T[0-9]{3}_).+(?=\.xdf)', file.name)[0]
-
-    return uid, session, trial, task
-
-def get_information2(file):
-    uid = re.findall('.+(?=_SRE+_T[0-9]{3}_)', file.name)[0]
-    session = "RE"
-    trial = int(re.findall('(?<=_SRE_T)[0-9]{3}(?=_)', file.name)[0])
-    task = re.findall('(?<=_SRE_T[0-9]{3}_).+(?=\.xdf)', file.name)[0]
-
-    return uid, session, trial, task
 
 def expand_files(file, dst_path):
 
@@ -66,15 +52,24 @@ def expand_files(file, dst_path):
             f1.write(json_data)
 
 def main():
-    src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\raw')
-    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\expanded')
+    # src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\raw')
+    # dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments5-realtime-needle-pass\expanded')
+    #src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-IU-experiments\raw')
+    #dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-IU-experiments\expanded')
+
+    src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData\raw')
+    dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\MasterThesisExperiment\SensorsData\expanded')
+    # src_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments\raw')
+    # dst_path = Path(r'C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Realtime-Project-Purdue-experiments\expanded')
 
     for file in src_path.rglob("*.xdf"):
-        if 'experiment01' in file.name:
+        #print(file)
+        if 'experiment01' in file.name or True:
 
             try:
-                uid, session, trial, task = get_information2(file)
-            except Exception:
+                uid, session, trial, task = get_information3(file)
+            except Exception as e:
+                print(e)
                 continue
 
             print(file)

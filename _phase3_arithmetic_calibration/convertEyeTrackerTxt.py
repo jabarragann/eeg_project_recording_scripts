@@ -8,7 +8,7 @@ import copy
 from pathlib import Path
 from pylsl import local_clock
 import time
-
+from _phase3_arithmetic_calibration.RegexFunctions import get_information2, get_information, get_information3
 
 dataPath  = Path('./data_raw/')
 
@@ -60,11 +60,12 @@ def main():
         if len(re.findall(".xdf", f.name)) > 0:
             file = f
 
-            # Rename files --> remove identifiers
-            uid = re.findall('.+(?=_S[0-9][0-9]+_T[0-9][0-9]_)', file.name)[0]
-            session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9][0-9]_)', file.name)[0])
-            trial = int(re.findall('(?<=_S[0-9]{2}_T)[0-9]{2}(?=_)', file.name)[0])
-            task = re.findall('(?<=_S[0-9]{2}_T[0-9]{2}_).+(?=_raw\.xdf)', file.name)[0]
+            uid, session, trial, task = get_information3(file)  # If any problem check the regex functions.
+            # # Rename files --> remove identifiers
+            # uid = re.findall('.+(?=_S[0-9]{1}_T[0-9]{3}_)', file.name)[0]
+            # session = int(re.findall('(?<=_S)[0-9]+(?=_T[0-9]{3}_)', file.name)[0])
+            # trial = int(re.findall('(?<=_S[0-9]{1}_T)[0-9]+(?=_)', file.name)[0])
+            # task = re.findall('(?<=_S[0-9]{1}_T[0-9]{3}_).+(?=_raw\.xdf)', file.name)[0]
 
             basePath = './eye_tracker_txt/' + "{:}_S{:02d}_T{:02d}_{:}_".format(uid, session, trial, task)
 
