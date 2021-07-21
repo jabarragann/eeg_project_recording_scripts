@@ -64,7 +64,7 @@ def trimVideoToSignals(new_video_path,new_ts_path,video_path, ts_path, eeg_file_
     cv2.destroyAllWindows()
 
 def iterateOverAllEegFiles():
-    root_path = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealTimeVideos\2021-02-04_22h.31m.24s_feedback2")
+    root_path = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealTimeVideos\2021-02-10_17h.14m.48s_keyu")
     data_path = Path("./data_txt")
     video_path = root_path / r"video_right_color.avi"
     timestamps_path = root_path / r"video_right_color_ts.txt"

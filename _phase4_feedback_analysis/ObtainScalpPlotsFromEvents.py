@@ -103,10 +103,14 @@ def obtain_spectral_features(data, win=4.0,sf=250):
     return bandpower[bands]
 
 def main():
-    dataPath = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments4-Data\01-Juan-Feedback-experiment")
-    trial = 12
-    fileRootName = "Ujuan_S01_T{:2d}_BloodDynamic".format(trial)
-    dataPath = dataPath / fileRootName
+    # dataPath = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments4-Data\01-Juan-Feedback-experiment")
+    # trial = 12
+    # fileRootName = "Ujuan_S01_T{:2d}_BloodDynamic".format(trial)
+    # dataPath = dataPath / fileRootName
+
+    dataPath = Path(r"C:\Users\asus\OneDrive - purdue.edu\RealtimeProject\Experiments4-Data\03-Keyu-Feedback-experiment")
+    trial = 1
+    fileRootName = "UKeyu_S01_T{:02d}_Microbreak".format(trial)  # BloodDynamic
     eventToExtract =2 #,13 8,2 #Greater than 0
 
     #load data
@@ -116,8 +120,8 @@ def main():
     alarm, alarmTime = eventsData['alarm']['data'], eventsData['alarm']['time']
 
     #Obtain data from event
-    eegData = eegData.loc[(eegData['LSL_TIME']>alarmTime[eventToExtract-1]) &
-                          (eegData['LSL_TIME']<alarmTime[eventToExtract+1])]
+    # eegData = eegData.loc[(eegData['LSL_TIME']>alarmTime[eventToExtract-1]) &
+    #                       (eegData['LSL_TIME']<alarmTime[eventToExtract+1])]
     eegData = eegData[EEG_channels].values.transpose()
     eegData = eegData / 1e6 # Convert from uv to v
     ch_names = EEG_channels
@@ -126,18 +130,18 @@ def main():
     raw = mne.io.RawArray(eegData, info)
 
     #create epochs
-    new_events = np.zeros((2,3)).astype(np.int32)
-    new_events[:,0] = list(map(int,[5*250, 15*250])); new_events[:,2] = [1,1]
-    epochs = mne.Epochs(raw, new_events, tmin=-5, tmax=5)
-
+    new_events = np.zeros((1,3)).astype(np.int32)
+    new_events[:,0] = list(map(int,[alarmTime[eventToExtract]*250])); new_events[:,2] = [1]
+    epochs = mne.Epochs(raw, new_events, tmin=-5.0, tmax=5.0)
     #Create features
-    beforeStimulusFeat = obtain_spectral_features(epochs[0].get_data(),win=2.0)
-    afterStimulusFeat = obtain_spectral_features(epochs[1].get_data(), win=2.0)
+    beforeStimulusFeat = obtain_spectral_features(epochs[0].get_data()[:,:,epochs[0].times < 0],win=2.0)
+    afterStimulusFeat = obtain_spectral_features(epochs[0].get_data()[:,:,epochs[0].times > 0], win=2.0)
     bandpower = 10*np.log10(afterStimulusFeat/beforeStimulusFeat)  #Differences in decibels
 
     #Plot events
     fig, axes = plt.subplots(1,1)
 
+    epochs.plot()
     plot_workload_idx(eventsData,eventToExtract, axes)
     create_scalp_plot(bandpower,v_min=-8.0,v_max=8.0)
 

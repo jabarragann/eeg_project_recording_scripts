@@ -36,6 +36,7 @@ for f in dataPath.glob('*.xdf'):
         stream_names = [stream['info']['name'][0] for stream in data]
         print(stream_names)
 
+        workloadPredData = None; workloadPredInfo = None; workloadPredTime = None
         #Get data and experiment markers
         #Remake this method to be more general ** Later today
         #Also adjust the code so that each signal is trimmed from data that does not belongs to experiment
@@ -47,10 +48,10 @@ for f in dataPath.glob('*.xdf'):
                 markers = stream['time_series']
                 markersTime = stream['time_stamps']
             elif stream['info']['name'][0] == 'NB-2015.10.15' or stream['info']['name'][0] == 'NB-2015.10.16':
-                if stream['footer']['info']['first_timestamp'][0] != '0':
-                    eegData = stream['time_series']
-                    eegInfo = stream['info']
-                    eegTime = stream['time_stamps']
+                # if stream['footer']['info']['first_timestamp'][0] != '0':
+                eegData = stream['time_series']
+                eegInfo = stream['info']
+                eegTime = stream['time_stamps']
             elif stream['info']['name'][0] == 'PredictionEvents':
                 workloadPredData = np.array(stream['time_series'])
                 workloadPredInfo = stream['info']
@@ -60,20 +61,25 @@ for f in dataPath.glob('*.xdf'):
                 alarmPredInfo = stream['info']
                 alarmPredTime = stream['time_stamps']
 
-        #Crop predictions and events with start and end signals
-        valIdx = (alarmPredTime > markersTime[0]) & (alarmPredTime < markersTime[1])
-        alarmPredData =  alarmPredData[valIdx]
-        alarmPredTime = alarmPredTime[valIdx] - markersTime[0]
-        valIdx = (workloadPredTime > markersTime[0]) & (workloadPredTime < markersTime[1])
-        workloadPredData = workloadPredData[valIdx]
-        workloadPredTime = workloadPredTime[valIdx] - markersTime[0]
+        if len( markers ) > 2: #If multiple events are found in the recording only grab the last two
+            markers = markers[-2:]
+            markersTime = markersTime[-2:]
 
-        #Save predictions
-        alarmDict = dict(data=alarmPredData, time=alarmPredTime )
-        predDict = dict(data=workloadPredData,time = workloadPredTime)
-        finalDict = dict(alarm=alarmDict, pred=predDict)
-        p1 = './prediction_events/' + f.with_suffix("").name + "_intervention.pickle"
-        pickle.dump(finalDict,open(p1,'wb'))
+        if task != "Baseline":
+            #Crop predictions and events with start and end signals
+            valIdx = (alarmPredTime > markersTime[0]) & (alarmPredTime < markersTime[1])
+            alarmPredData =  alarmPredData[valIdx]
+            alarmPredTime = alarmPredTime[valIdx] - markersTime[0]
+            valIdx = (workloadPredTime > markersTime[0]) & (workloadPredTime < markersTime[1])
+            workloadPredData = workloadPredData[valIdx]
+            workloadPredTime = workloadPredTime[valIdx] - markersTime[0]
+
+            #Save predictions
+            alarmDict = dict(data=alarmPredData, time=alarmPredTime )
+            predDict = dict(data=workloadPredData,time = workloadPredTime)
+            finalDict = dict(alarm=alarmDict, pred=predDict)
+            p1 = './prediction_events/' + f.with_suffix("").name + "_intervention.pickle"
+            pickle.dump(finalDict,open(p1,'wb'))
 
         #Difference of LSL time and computer time
         difference = float(markers[0][1]) - markersTime[0]
